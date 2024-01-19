@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class BlogApiController {
     // HTTP 메소드가 POST일 때 전달받은 URL와 동일하면 메소드로 맵핑
     @PostMapping("/api/articles")
     // 요청 본문 값 맵핑
-    public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request) {
-        Article savedArticle = blogService.save(request);
+    public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request, Principal principal) {
+        Article savedArticle = blogService.save(request, principal.getName());
 
         // 요청한 자원이 성공적으로 생성되었으며 저장된 블로그 글 정보를 응답 객체에 넣어 전송
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -56,8 +57,9 @@ public class BlogApiController {
 
     @PutMapping("/api/articles/{id}")
     public ResponseEntity<Article> updateArticle(@PathVariable long id, @RequestBody UpdateArticleRequest request) {
-        Article updateArticle = blogService.update(id,request);
+        Article updateArticle = blogService.update(id, request);
 
-        return  ResponseEntity.ok().body(updateArticle);
+        return ResponseEntity.ok().body(updateArticle);
     }
+
 }
